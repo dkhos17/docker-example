@@ -1,0 +1,31 @@
+version: '3'
+services:
+    postgres:
+        image: postgres:alpine
+        container_name: postgres
+        environment:
+            POSTGRES_DB: postgres
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: postgres
+        volumes:
+            - ./postgres:/docker-entrypoint-initdb.d/
+        ports:
+            - 5432:5432 
+    api:
+        build: ./app
+        container_name: api
+        volumes:
+            - ./app:/usr/src/app
+        ports:
+            - 5000:80
+        depends_on: 
+            - postgres
+    front:
+        image: php:apache
+        container_name: front
+        volumes:
+            - ./front:/var/www/html
+        ports:
+            - 8000:80
+        depends_on: 
+            - api
